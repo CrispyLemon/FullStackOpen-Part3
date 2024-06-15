@@ -5,6 +5,7 @@ const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
 // const mongoose = require('mongoose');
+app.use(express.static('dist'));
 const Person =  require('./models/person')
 app.use(morgan('tiny'));
 app.use(cors());
@@ -69,7 +70,9 @@ app.post('/api/persons', (req, res, next) => {
     }
 
     const person =  new Person({
-        // id: genID(),
+        name: body.name,
+        number: body.number,
+    });
     person.save().then(savedPerson => {
         res.json(savedPerson);
     })
