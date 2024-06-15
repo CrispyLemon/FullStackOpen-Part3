@@ -10,14 +10,13 @@ app.use(morgan('tiny'));
 app.use(cors());
 
 
-
 morgan.token('body', (req) => {
     return JSON.stringify(req.body)
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-app.use(express.static('dist'));
+
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
@@ -51,7 +50,9 @@ app.get('/api/persons/:id', (req, res, next) => {
 // }
 app.use(bodyParser.json());
 
+
 app.post('/api/persons', (req, res, next) => {
+
     const body = req.body;
     if (!body.name) {
         return res.status(400).json({
@@ -66,16 +67,14 @@ app.post('/api/persons', (req, res, next) => {
             error: 'number missing'
         });
     }
+
     const person =  new Person({
         // id: genID(),
-        name: body.name,
-        number: body.number
-    });
-
     person.save().then(savedPerson => {
         res.json(savedPerson);
     })
     .catch(error => next(error));    
+
 
     
 });

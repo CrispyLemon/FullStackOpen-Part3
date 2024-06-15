@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 if (process.argv.length > 5) {
     console.log('Too many arguments');
     process.exit(1);
