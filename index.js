@@ -10,14 +10,13 @@ app.use(morgan('tiny'));
 app.use(cors());
 
 
-
 morgan.token('body', (req) => {
     return JSON.stringify(req.body)
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
-app.use(express.static('dist'));
+
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
@@ -63,6 +62,31 @@ const unknownEndpoint = (req, res) => {
 // }
 app.use(bodyParser.json());
 
+        res.json(persons);
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(500).end()
+    });
+});
+
+app.get('/api/persons/:id', (req, res) => {
+    Person.findById(req.params.id).then(person => {
+        if ( person ){
+        res.json(person);
+        } else {
+            res.status(404).end();
+        }
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(400).send({ error: 'malformatted id' })
+    });
+    
+});
+
+
+
 app.post('/api/persons', (req, res) => {
     const body = req.body;
     if (!body.name) {
@@ -78,15 +102,13 @@ app.post('/api/persons', (req, res) => {
             error: 'number missing'
         });
     }
+
     const person =  new Person({
         // id: genID(),
-        name: body.name,
-        number: body.number
-    });
-
     person.save().then(savedPerson => {
         res.json(savedPerson);
     });    
+
 
     
 });
