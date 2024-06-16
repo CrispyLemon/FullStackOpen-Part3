@@ -1,33 +1,32 @@
-const express = require('express');
-const http = require('http');
-const bodyParser = require('body-parser');
-const app = express();
-const morgan = require('morgan');
-const cors = require('cors');
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+const morgan = require('morgan')
+const cors = require('cors')
 // const mongoose = require('mongoose');
-app.use(express.static('dist'));
+app.use(express.static('dist'))
 const Person =  require('./models/person')
-app.use(morgan('tiny'));
-app.use(cors());
+app.use(morgan('tiny'))
+app.use(cors())
 
 
 morgan.token('body', (req) => {
     return JSON.stringify(req.body)
 })
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
-});
+})
 
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
-    res.json(persons)
+        res.json(persons)
     })
-});
+})
 
 app.get('/api/persons/:id', (req, res, next) => {
     Person.findById(req.params.id).then(person => {
@@ -37,28 +36,28 @@ app.get('/api/persons/:id', (req, res, next) => {
             res.status(404).end()
         }
     })
-    .catch(error => {
-        next(error)
-    });
-});
+        .catch(error => {
+            next(error)
+        })
+})
 
 
 // const genID = () => {
-//     const maxID = persons.length > 0 
+//     const maxID = persons.length > 0
 //     ? Math.max(...persons.map(person => person.id))
 //     : 0;
 //     return maxID + 1;
 // }
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 
 app.post('/api/persons', (req, res, next) => {
 
-    const body = req.body;
+    const body = req.body
     if (!body.name) {
         return res.status(400).json({
             error: 'name missing'
-        });
+        })
     // } else if (persons.find(p => p.name === body.name)) {
     //     return res.status(400).json({
     //         error: 'name must be unique'
@@ -66,48 +65,48 @@ app.post('/api/persons', (req, res, next) => {
     } else if (!body.number) {
         return res.status(400).json({
             error: 'number missing'
-        });
+        })
     }
 
     const person =  new Person({
         name: body.name,
         number: body.number,
-    });
-    person.save().then(savedPerson => {
-        res.json(savedPerson);
     })
-    .catch(error => next(error));    
+    person.save().then(savedPerson => {
+        res.json(savedPerson)
+    })
+        .catch(error => next(error))
 
 
-    
-});
+
+})
 
 app.put('/api/persons/:id', (req, res, next) => {
-    const {name, number} = req.body;
-    
+    const { name, number } = req.body
 
-    Person.findByIdAndUpdate(req.params.id, {name, number}, { new: true, runValidators: true, context: 'query'})
+
+    Person.findByIdAndUpdate(req.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
-            res.json(updatedPerson);
+            res.json(updatedPerson)
         })
         .catch(error => next(error))
-    });
+})
 
 
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndDelete(req.params.id)
-        .then(result => {
-            res.status(204).end();
+        .then(result => { // eslint-disable-line no-unused-vars
+            res.status(204).end()
         })
         .catch(error => next(error))
-});
+})
 
 app.get('/info', async (req, res) =>  {
-    const personsCount = await Person.countDocuments();
-    const date = new Date();
+    const personsCount = await Person.countDocuments()
+    const date = new Date()
     res.send(`<p>Phonebook has info for ${personsCount} people</p><p>${date}</p>`)
-});
+})
 
 const errorHandler = (error, req, res, next) => {
     console.error(error.message)
@@ -127,8 +126,8 @@ const unknownEndpoint = (req, res) => {
 
 
 
-app.use(unknownEndpoint);
-app.use(errorHandler);
+app.use(unknownEndpoint)
+app.use(errorHandler)
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
-console.log(`Server running on port ${PORT}`); 
+console.log(`Server running on port ${PORT}`)
