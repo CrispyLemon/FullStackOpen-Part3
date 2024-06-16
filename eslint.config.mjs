@@ -1,14 +1,14 @@
-import globals from "globals"; 
-import pluginJs from "@eslint/js";
+import globals from 'globals'
+import pluginJs from '@eslint/js'
 import stylisticJs from '@stylistic/eslint-plugin-js'
-import { parse } from "dotenv";
+import { parse } from 'dotenv' //eslint-disable-line no-unused-vars
 
 
 export default [
-    {files: ["**/*.js"], languageOptions: {sourceType: "commonjs",}},
-    {languageOptions: {globals: globals.node, sourceType: "script", ecmaVersion: "latest", parserOptions: {ecmaVersion: 2021, sourceType: "module",},}},
-    {ignores: ["dist/"]},
-    {plugins: {'@stylistic/js': stylisticJs}},
+    { files: ['**/*.js'], languageOptions: { sourceType: 'commonjs', } },
+    { languageOptions: { globals: globals.node, sourceType: 'module', ecmaVersion: 'latest', parserOptions: { ecmaVersion: 2021, 'sourceType': 'module', } } },
+    { ignores: ['dist/'] },
+    { plugins: { '@stylistic/js': stylisticJs } },
     {
         rules: {
             '@stylistic/js/indent': [
@@ -35,4 +35,4 @@ export default [
         }
     },
     pluginJs.configs.recommended,
-];
+]
